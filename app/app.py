@@ -1,5 +1,5 @@
 """
-Customer Churn Predictor - Streamlit App
+Customer Churn Predictor - Streamlit App (Deployed on Streamlit Community Cloud)
 
 Loads a pre trained Logistic Regression model and scaler to predict churn probability
 for a hypothetical customer, based on interactive form inputs. Displays results as a

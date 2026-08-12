@@ -2,7 +2,8 @@
 Customer Churn Predictor - Streamlit App
 
 Loads a pre trained Logistic Regression model and scaler to predict churn probability
-for a hypothetical customer, based on interactive form inputs.
+for a hypothetical customer, based on interactive form inputs. Displays results as a
+Low/Medium/High risk level along with the raw probability.
 
 Note: since the model was trained on a NumPy array (not a named DataFrame),
 feature_names_in_ is unavailable. Column order is instead hardcoded to match the exact
@@ -18,28 +19,32 @@ scaler = joblib.load('models/scaler.pkl')
 st.title("Customer Churn Predictor")
 st.write("This app predicts whether a customer is likely to churn.")
 
-tenure = st.slider("Tenure (months)", min_value=0, max_value=72, value=12)
-monthly_charges = st.slider("Monthly Charges ($)", min_value=18.0, max_value=120.0, value=70.0)
-contract = st.selectbox("Contract Type", ["Month-to-month", "One year", "Two year"])
-
 st.subheader("Customer Details")
 
-gender = st.selectbox("Gender", ["Female", "Male"])
-senior_citizen = st.selectbox("Senior Citizen", ["No", "Yes"])
-partner = st.selectbox("Partner", ["No", "Yes"])
-dependents = st.selectbox("Dependents", ["No", "Yes"])
-phone_service = st.selectbox("Phone Service", ["No", "Yes"])
-multiple_lines = st.selectbox("Multiple Lines", ["No", "Yes"])
-internet_service = st.selectbox("Internet Service", ["DSL", "Fiber optic", "No"])
-online_security = st.selectbox("Online Security", ["No", "Yes"])
-online_backup = st.selectbox("Online Backup", ["No", "Yes"])
-device_protection = st.selectbox("Device Protection", ["No", "Yes"])
-tech_support = st.selectbox("Tech Support", ["No", "Yes"])
-streaming_tv = st.selectbox("Streaming TV", ["No", "Yes"])
-streaming_movies = st.selectbox("Streaming Movies", ["No", "Yes"])
-paperless_billing = st.selectbox("Paperless Billing", ["No", "Yes"])
-payment_method = st.selectbox("Payment Method",
-    ["Bank transfer (automatic)", "Credit card (automatic)", "Electronic check", "Mailed check"])
+col1, col2 = st.columns(2)
+
+with col1:
+    tenure = st.slider("Tenure (months)", min_value=0, max_value=72, value=12)
+    monthly_charges = st.slider("Monthly Charges ($)", min_value=18.0, max_value=120.0, value=70.0)
+    contract = st.selectbox("Contract Type", ["Month-to-month", "One year", "Two year"])
+    gender = st.selectbox("Gender", ["Female", "Male"])
+    senior_citizen = st.selectbox("Senior Citizen", ["No", "Yes"])
+    partner = st.selectbox("Partner", ["No", "Yes"])
+    dependents = st.selectbox("Dependents", ["No", "Yes"])
+    phone_service = st.selectbox("Phone Service", ["No", "Yes"])
+    multiple_lines = st.selectbox("Multiple Lines", ["No", "Yes"])
+    payment_method = st.selectbox("Payment Method",
+        ["Bank transfer (automatic)", "Credit card (automatic)", "Electronic check", "Mailed check"])
+
+with col2:
+    internet_service = st.selectbox("Internet Service", ["DSL", "Fiber optic", "No"])
+    online_security = st.selectbox("Online Security", ["No", "Yes"])
+    online_backup = st.selectbox("Online Backup", ["No", "Yes"])
+    device_protection = st.selectbox("Device Protection", ["No", "Yes"])
+    tech_support = st.selectbox("Tech Support", ["No", "Yes"])
+    streaming_tv = st.selectbox("Streaming TV", ["No", "Yes"])
+    streaming_movies = st.selectbox("Streaming Movies", ["No", "Yes"])
+    paperless_billing = st.selectbox("Paperless Billing", ["No", "Yes"])
 
 if st.button("Predict"):
     input_dict = {
@@ -86,7 +91,18 @@ if st.button("Predict"):
     prediction = model.predict(input_scaled)[0]
     probability = model.predict_proba(input_scaled)[0][1]
 
-    st.write("Prediction:", "Churn" if prediction == 1 else "No Churn")
-    st.write("Churn Probability:", f"{probability:.1%}")
+    if probability < 0.3:
+        risk_level = "Low"
+        risk_color = "green"
+    elif probability < 0.6:
+        risk_level = "Medium"
+        risk_color = "orange"
+    else:
+        risk_level = "High"
+        risk_color = "red"
 
-    st.write(input_df)
+    st.markdown(f"### Risk Level: :{risk_color}[{risk_level}]")
+    st.write(f"Churn Probability: {probability:.1%}")
+
+    with st.expander("See model input details"):
+        st.write(input_df)

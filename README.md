@@ -21,6 +21,24 @@ Given some basic info about a customer: how long they've been with the company, 
 they have, their contract type, monthly bill, etc, the app predicts how likely they are to churn 
 (cancel their service), and shows that as a Low/Medium/High risk level along with the actual calculated churn %.
 
+## Screenshots
+
+**The app in action:**
+
+![App form](screenshots/appinaction.png)
+
+**A high risk prediction:**
+
+![High risk prediction](screenshots/highrisk.png)
+
+**A medium risk prediction:**
+
+![Medium risk prediction](screenshots/mediumrisk.png)
+
+**A low risk prediction:**
+
+![Low risk prediction](screenshots/lowrisk.png)
+
 ## The dataset
 
 I used the [IBM Telco Customer Churn dataset](https://www.kaggle.com/datasets/blastchar/telco-customer-churn), 
